@@ -6,6 +6,13 @@ function required(name: string): string {
   return value;
 }
 
+const REQUIRED_VARS = ["DATABASE_URL", "CRON_SECRET", "PLAYER_1", "PLAYER_2"] as const;
+
+/** Non-throwing check, used to show a setup screen instead of crashing the page. */
+export function getMissingEnvVars(): string[] {
+  return REQUIRED_VARS.filter((name) => !process.env[name]);
+}
+
 export const env = {
   get databaseUrl() {
     return required("DATABASE_URL");

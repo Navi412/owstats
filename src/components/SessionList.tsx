@@ -21,7 +21,7 @@ function formatTime(iso: string): string {
 export function SessionList({ sessions }: { sessions: SessionDay[] }) {
   if (sessions.length === 0) {
     return (
-      <section className="rounded-2xl bg-surface-1 border border-white/10 p-6">
+      <section className="rounded-2xl bg-surface-1 border border-white/10 shadow-xl shadow-black/40 p-6">
         <h2 className="text-sm font-semibold text-text-primary mb-1">Últimas sesiones</h2>
         <p className="text-sm text-text-muted">Todavía no se registraron partidas.</p>
       </section>
@@ -29,7 +29,7 @@ export function SessionList({ sessions }: { sessions: SessionDay[] }) {
   }
 
   return (
-    <section className="rounded-2xl bg-surface-1 border border-white/10 p-6">
+    <section className="rounded-2xl bg-surface-1 border border-white/10 shadow-xl shadow-black/40 p-6">
       <h2 className="text-sm font-semibold text-text-primary mb-4">Últimas sesiones</h2>
       <ul className="flex flex-col gap-4">
         {sessions.map((day) => (

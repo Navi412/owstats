@@ -46,7 +46,7 @@ function ChartTooltip({
 export function WinrateChart({ data }: { data: DailyWinrate[] }) {
   if (data.length === 0) {
     return (
-      <section className="rounded-2xl bg-surface-1 border border-white/10 p-6">
+      <section className="rounded-2xl bg-surface-1 border border-white/10 shadow-xl shadow-black/40 p-6">
         <h2 className="text-sm font-semibold text-text-primary mb-1">Winrate por día</h2>
         <p className="text-sm text-text-muted">
           Todavía no hay suficientes partidas registradas para mostrar la gráfica.
@@ -56,7 +56,7 @@ export function WinrateChart({ data }: { data: DailyWinrate[] }) {
   }
 
   return (
-    <section className="rounded-2xl bg-surface-1 border border-white/10 p-6">
+    <section className="rounded-2xl bg-surface-1 border border-white/10 shadow-xl shadow-black/40 p-6">
       <h2 className="text-sm font-semibold text-text-primary mb-4">Winrate por día</h2>
       <div className="h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">

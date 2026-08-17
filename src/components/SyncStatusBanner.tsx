@@ -44,30 +44,34 @@ export function SyncStatusBanner({ syncStatus }: { syncStatus: SyncStatus }) {
   const latestFailed = lastRun.id !== lastSuccessful?.id;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-surface-1 px-4 py-3 flex flex-col gap-1.5">
+    <div className="rounded-xl border border-white/10 bg-surface-1 px-4 py-3 flex flex-col gap-2">
       {lastSuccessful ? (
-        <p className="text-sm text-text-secondary flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-status-good shrink-0" aria-hidden />
-          Última sincronización correcta:{" "}
-          <span className="text-text-primary font-medium">
-            {formatRelative(lastSuccessful.run_at)}
-          </span>
-          <span className="text-text-muted">({formatAbsolute(lastSuccessful.run_at)})</span>
-        </p>
+        <div className="flex items-start gap-2">
+          <span className="mt-1 h-2 w-2 rounded-full bg-status-good shrink-0" aria-hidden />
+          <p className="text-sm text-text-secondary">
+            Última sincronización correcta:{" "}
+            <span className="text-text-primary font-medium">
+              {formatRelative(lastSuccessful.run_at)}
+            </span>{" "}
+            <span className="text-text-muted">({formatAbsolute(lastSuccessful.run_at)})</span>
+          </p>
+        </div>
       ) : (
-        <p className="text-sm text-text-secondary flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-status-critical shrink-0" aria-hidden />
-          Todavía no hubo ninguna sincronización correcta.
-        </p>
+        <div className="flex items-start gap-2">
+          <span className="mt-1 h-2 w-2 rounded-full bg-status-critical shrink-0" aria-hidden />
+          <p className="text-sm text-text-secondary">Todavía no hubo ninguna sincronización correcta.</p>
+        </div>
       )}
 
       {latestFailed && (
-        <p className="text-xs text-status-critical flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-status-critical shrink-0" aria-hidden />
-          El último intento ({formatRelative(lastRun.run_at)}) tuvo problemas —{" "}
-          jugadora 1: {STATUS_LABELS[lastRun.player_1_status]}, jugadora 2:{" "}
-          {STATUS_LABELS[lastRun.player_2_status]}.
-        </p>
+        <div className="flex items-start gap-2">
+          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-status-critical shrink-0" aria-hidden />
+          <p className="text-xs text-status-critical">
+            El último intento ({formatRelative(lastRun.run_at)}) tuvo problemas — jugadora 1:{" "}
+            {STATUS_LABELS[lastRun.player_1_status]}, jugadora 2:{" "}
+            {STATUS_LABELS[lastRun.player_2_status]}.
+          </p>
+        </div>
       )}
     </div>
   );
