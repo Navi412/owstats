@@ -14,8 +14,8 @@ function formatAbsolute(iso: string): string {
   return new Date(iso).toLocaleString("es-ES", {
     dateStyle: "medium",
     timeStyle: "short",
-    timeZone: "UTC",
-  }) + " UTC";
+    timeZone: "Europe/Madrid",
+  });
 }
 
 function formatRelative(iso: string): string {

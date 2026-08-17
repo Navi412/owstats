@@ -15,7 +15,7 @@ export function StreakBadge({ streak }: { streak: Streak }) {
 
   return (
     <div
-      className={`p5-panel-tight px-4 py-3 flex items-center gap-3 border-2 ${
+      className={`p5-panel-tight p5-tile-hover cursor-pointer px-4 py-3 flex items-center gap-3 border-2 ${
         isWin ? "bg-p5-red border-p5-red" : "bg-surface-1 border-text-primary/60"
       }`}
     >

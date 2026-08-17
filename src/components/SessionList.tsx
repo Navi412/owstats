@@ -14,7 +14,7 @@ function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("es-ES", {
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "UTC",
+    timeZone: "Europe/Madrid",
   });
 }
 
@@ -51,7 +51,7 @@ export function SessionList({ sessions }: { sessions: SessionDay[] }) {
                   className="flex items-center justify-between text-xs text-text-secondary"
                 >
                   <span className="text-text-muted font-mono">
-                    {formatTime(w.windowStart)}–{formatTime(w.windowEnd)} UTC
+                    {formatTime(w.windowStart)}–{formatTime(w.windowEnd)}
                   </span>
                   <span>
                     {w.games} {w.games === 1 ? "partida" : "partidas"} ·{" "}

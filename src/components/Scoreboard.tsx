@@ -25,11 +25,11 @@ export function Scoreboard({ totals }: { totals: ScoreboardTotals }) {
       </div>
 
       <div className="relative grid grid-cols-2 gap-3 w-full">
-        <div className="p5-panel-tight bg-p5-red px-4 py-3 text-center border-2 border-p5-red">
+        <div className="p5-panel-tight p5-tile-hover bg-p5-red px-4 py-3 text-center border-2 border-p5-red cursor-pointer">
           <p className="p5-heading text-xs text-black/70 mb-1">Victorias</p>
           <p className="p5-heading text-3xl text-black drop-shadow-none">{totals.wins}</p>
         </div>
-        <div className="p5-panel-tight bg-surface-2 px-4 py-3 text-center border-2 border-text-primary/60">
+        <div className="p5-panel-tight p5-tile-hover bg-surface-2 px-4 py-3 text-center border-2 border-text-primary/60 cursor-pointer">
           <p className="p5-heading text-xs text-text-secondary mb-1">Derrotas</p>
           <p className="p5-heading text-3xl text-text-primary">{totals.losses}</p>
         </div>
