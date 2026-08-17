@@ -5,6 +5,7 @@ import { SessionList } from "@/components/SessionList";
 import { SyncStatusBanner } from "@/components/SyncStatusBanner";
 import { SetupNotice } from "@/components/SetupNotice";
 import { ErrorNotice } from "@/components/ErrorNotice";
+import { UpdateNowButton } from "@/components/UpdateNowButton";
 import { classifyDbError } from "@/lib/dbError";
 import { getMissingEnvVars } from "@/lib/env";
 import {
@@ -75,6 +76,7 @@ export default async function Home() {
   return (
     <Shell>
       <p className="text-sm text-text-secondary mb-1 pl-1">{subtitle}</p>
+      <UpdateNowButton />
       <SyncStatusBanner syncStatus={syncStatus} />
       <Scoreboard totals={totals} />
       <StreakBadge streak={streak} />
