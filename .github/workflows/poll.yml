@@ -1,0 +1,25 @@
+name: Poll OverFast stats
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call /api/poll
+        run: |
+          http_code=$(curl -sS -o response.txt -w "%{http_code}" -X POST \
+            "${APP_URL}/api/poll" \
+            -H "Authorization: Bearer ${CRON_SECRET}")
+          echo "HTTP status: $http_code"
+          cat response.txt
+          if [ "$http_code" -ge 300 ]; then
+            echo "::error::/api/poll returned HTTP $http_code"
+            exit 1
+          fi
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
