@@ -11,11 +11,11 @@ import {
 } from "recharts";
 import type { DailyWinrate } from "@/lib/queries";
 
-const SERIES_COLOR = "#3987e5"; // series-1, dark step
-const GRIDLINE = "#2c2c2a";
-const BASELINE = "#383835";
-const MUTED = "#898781";
-const SURFACE = "#1a1a19";
+const SERIES_COLOR = "#ff2a3c"; // p5-red-bright
+const GRIDLINE = "#2c2725";
+const BASELINE = "#e2001a";
+const MUTED = "#8f887a";
+const SURFACE = "#141213";
 
 function formatDay(day: string): string {
   const d = new Date(`${day}T00:00:00Z`);
@@ -33,9 +33,9 @@ function ChartTooltip({
   const point = payload[0].payload;
 
   return (
-    <div className="rounded-lg border border-white/10 bg-surface-1 px-3 py-2 shadow-lg">
+    <div className="border-2 border-p5-red bg-surface-1 px-3 py-2 shadow-[3px_3px_0_0_rgba(0,0,0,0.6)]">
       <p className="text-xs text-text-secondary mb-1">{formatDay(point.day)}</p>
-      <p className="text-sm font-semibold text-text-primary">{point.winrate.toFixed(0)}% winrate</p>
+      <p className="p5-heading text-base text-text-primary">{point.winrate.toFixed(0)}% winrate</p>
       <p className="text-xs text-text-muted">
         {point.wins}V / {point.losses}D
       </p>
@@ -46,8 +46,8 @@ function ChartTooltip({
 export function WinrateChart({ data }: { data: DailyWinrate[] }) {
   if (data.length === 0) {
     return (
-      <section className="rounded-2xl bg-surface-1 border border-white/10 shadow-xl shadow-black/40 p-6">
-        <h2 className="text-sm font-semibold text-text-primary mb-1">Winrate por día</h2>
+      <section className="p5-panel p-6">
+        <h2 className="p5-heading text-xl text-text-primary mb-1">Winrate por día</h2>
         <p className="text-sm text-text-muted">
           Todavía no hay suficientes partidas registradas para mostrar la gráfica.
         </p>
@@ -56,8 +56,8 @@ export function WinrateChart({ data }: { data: DailyWinrate[] }) {
   }
 
   return (
-    <section className="rounded-2xl bg-surface-1 border border-white/10 shadow-xl shadow-black/40 p-6">
-      <h2 className="text-sm font-semibold text-text-primary mb-4">Winrate por día</h2>
+    <section className="p5-panel p-6">
+      <h2 className="p5-heading text-xl text-text-primary mb-4">Winrate por día</h2>
       <div className="h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
@@ -92,7 +92,7 @@ export function WinrateChart({ data }: { data: DailyWinrate[] }) {
               type="monotone"
               dataKey="winrate"
               stroke={SERIES_COLOR}
-              strokeWidth={2}
+              strokeWidth={3}
               dot={{ r: 3, fill: SERIES_COLOR, stroke: SURFACE, strokeWidth: 2 }}
               activeDot={{ r: 5, fill: SERIES_COLOR, stroke: SURFACE, strokeWidth: 2 }}
             />

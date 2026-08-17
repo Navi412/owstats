@@ -34,7 +34,7 @@ export function SyncStatusBanner({ syncStatus }: { syncStatus: SyncStatus }) {
 
   if (!lastRun) {
     return (
-      <div className="rounded-xl border border-white/10 bg-surface-1 px-4 py-3 text-sm text-text-muted">
+      <div className="p5-panel-tight border-2 border-text-muted/50 bg-surface-1 px-4 py-3 text-sm text-text-muted">
         Todavía no se ejecutó ninguna sincronización. Lanza el workflow de GitHub Actions o
         espera al próximo cron.
       </div>
@@ -44,12 +44,12 @@ export function SyncStatusBanner({ syncStatus }: { syncStatus: SyncStatus }) {
   const latestFailed = lastRun.id !== lastSuccessful?.id;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-surface-1 px-4 py-3 flex flex-col gap-2">
+    <div className="p5-panel-tight border-2 border-p5-red/60 bg-surface-1 px-4 py-3 flex flex-col gap-2">
       {lastSuccessful ? (
         <div className="flex items-start gap-2">
-          <span className="mt-1 h-2 w-2 rounded-full bg-status-good shrink-0" aria-hidden />
+          <span className="mt-1 h-2 w-2 rounded-full bg-text-primary shrink-0" aria-hidden />
           <p className="text-sm text-text-secondary">
-            Última sincronización correcta:{" "}
+            <span className="p5-heading text-text-primary not-italic">Sincronización OK:</span>{" "}
             <span className="text-text-primary font-medium">
               {formatRelative(lastSuccessful.run_at)}
             </span>{" "}
@@ -58,15 +58,18 @@ export function SyncStatusBanner({ syncStatus }: { syncStatus: SyncStatus }) {
         </div>
       ) : (
         <div className="flex items-start gap-2">
-          <span className="mt-1 h-2 w-2 rounded-full bg-status-critical shrink-0" aria-hidden />
+          <span className="mt-1 h-2 w-2 rounded-full bg-p5-red-bright shrink-0" aria-hidden />
           <p className="text-sm text-text-secondary">Todavía no hubo ninguna sincronización correcta.</p>
         </div>
       )}
 
       {latestFailed && (
         <div className="flex items-start gap-2">
-          <span className="mt-1 h-1.5 w-1.5 rounded-full bg-status-critical shrink-0" aria-hidden />
-          <p className="text-xs text-status-critical">
+          <span
+            className="mt-1 h-1.5 w-1.5 rounded-full bg-p5-red-bright shrink-0 animate-pulse"
+            aria-hidden
+          />
+          <p className="text-xs text-p5-red-bright">
             El último intento ({formatRelative(lastRun.run_at)}) tuvo problemas — jugadora 1:{" "}
             {STATUS_LABELS[lastRun.player_1_status]}, jugadora 2:{" "}
             {STATUS_LABELS[lastRun.player_2_status]}.

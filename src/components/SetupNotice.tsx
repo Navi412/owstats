@@ -7,13 +7,13 @@ const VAR_HINTS: Record<string, string> = {
 
 export function SetupNotice({ missing }: { missing: string[] }) {
   return (
-    <section className="rounded-2xl bg-surface-1 border border-white/10 shadow-xl shadow-black/40 p-6 flex flex-col gap-4">
+    <section className="p5-panel p-6 flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <span className="h-9 w-9 rounded-full bg-status-critical/15 border border-status-critical/30 flex items-center justify-center text-status-critical text-lg font-semibold shrink-0">
+        <span className="p5-heading h-10 w-10 bg-p5-red border-2 border-p5-red flex items-center justify-center text-black text-xl shrink-0">
           !
         </span>
         <div>
-          <h1 className="text-base font-semibold text-text-primary">Faltan variables de entorno</h1>
+          <h1 className="p5-heading text-xl text-text-primary">Faltan variables de entorno</h1>
           <p className="text-sm text-text-secondary">owstats no puede arrancar sin esto</p>
         </div>
       </div>
@@ -22,9 +22,9 @@ export function SetupNotice({ missing }: { missing: string[] }) {
         {missing.map((name) => (
           <li
             key={name}
-            className="rounded-lg bg-surface-2 border border-white/5 px-3 py-2 flex flex-col gap-0.5"
+            className="bg-surface-2 border-l-4 border-p5-red px-3 py-2 flex flex-col gap-0.5"
           >
-            <code className="text-sm font-mono text-status-critical">{name}</code>
+            <code className="text-sm font-mono text-p5-red-bright">{name}</code>
             <span className="text-xs text-text-muted">{VAR_HINTS[name] ?? "Requerida"}</span>
           </li>
         ))}

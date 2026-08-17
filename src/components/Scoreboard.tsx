@@ -9,29 +9,29 @@ export function Scoreboard({ totals }: { totals: ScoreboardTotals }) {
   return (
     <section
       aria-label="Marcador"
-      className="relative overflow-hidden rounded-2xl bg-surface-1 border border-white/10 shadow-xl shadow-black/40 p-6 flex flex-col items-center gap-6"
+      className="p5-panel relative overflow-hidden p-6 flex flex-col items-center gap-6"
     >
       <div
-        className="pointer-events-none absolute -top-24 h-48 w-48 rounded-full blur-3xl opacity-25"
-        style={{ background: "radial-gradient(circle, #3987e5, transparent 70%)" }}
+        className="pointer-events-none absolute -top-24 h-56 w-56 rounded-full blur-3xl opacity-30"
+        style={{ background: "radial-gradient(circle, #ff2a3c, transparent 70%)" }}
         aria-hidden
       />
 
       <div className="relative text-center">
-        <p className="text-sm text-text-secondary mb-1">Winrate jugando juntas</p>
-        <p className="text-[64px] leading-none font-semibold tracking-tight text-text-primary">
+        <p className="p5-heading text-sm text-text-secondary mb-1">Winrate jugando juntas</p>
+        <p className="p5-heading text-[72px] leading-none text-text-primary drop-shadow-[2px_2px_0_rgba(226,0,26,0.6)]">
           {formatWinrate(totals.winrate)}
         </p>
       </div>
 
       <div className="relative grid grid-cols-2 gap-3 w-full">
-        <div className="rounded-xl bg-surface-2 border border-white/5 px-4 py-3 text-center">
-          <p className="text-xs text-text-secondary mb-1">Victorias</p>
-          <p className="text-2xl font-semibold text-status-good">{totals.wins}</p>
+        <div className="p5-panel-tight bg-p5-red px-4 py-3 text-center border-2 border-p5-red">
+          <p className="p5-heading text-xs text-black/70 mb-1">Victorias</p>
+          <p className="p5-heading text-3xl text-black drop-shadow-none">{totals.wins}</p>
         </div>
-        <div className="rounded-xl bg-surface-2 border border-white/5 px-4 py-3 text-center">
-          <p className="text-xs text-text-secondary mb-1">Derrotas</p>
-          <p className="text-2xl font-semibold text-status-critical">{totals.losses}</p>
+        <div className="p5-panel-tight bg-surface-2 px-4 py-3 text-center border-2 border-text-primary/60">
+          <p className="p5-heading text-xs text-text-secondary mb-1">Derrotas</p>
+          <p className="p5-heading text-3xl text-text-primary">{totals.losses}</p>
         </div>
       </div>
 

@@ -22,15 +22,12 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 justify-center">
       <main className="flex w-full max-w-md flex-col gap-4 px-4 py-6 sm:max-w-lg">
-        <header className="flex items-center gap-2.5 mb-1">
-          <span
-            className="h-8 w-8 rounded-lg shrink-0"
-            style={{
-              background: "linear-gradient(135deg, #3987e5, #9085e9)",
-            }}
-            aria-hidden
-          />
-          <h1 className="text-lg font-semibold tracking-tight text-text-primary">owstats</h1>
+        <header className="relative mb-2 -rotate-1">
+          <div className="p5-stripe inline-flex items-center gap-2 px-4 py-1.5 shadow-[4px_4px_0_0_rgba(0,0,0,0.6)]">
+            <h1 className="p5-heading text-3xl text-text-primary drop-shadow-[1px_1px_0_rgba(0,0,0,0.8)]">
+              Owstats
+            </h1>
+          </div>
         </header>
         {children}
       </main>
@@ -75,7 +72,7 @@ export default async function Home() {
 
   return (
     <Shell>
-      <p className="text-sm text-text-secondary -mt-3 mb-1">{subtitle}</p>
+      <p className="text-sm text-text-secondary mb-1 pl-1">{subtitle}</p>
       <SyncStatusBanner syncStatus={syncStatus} />
       <Scoreboard totals={totals} />
       <StreakBadge streak={streak} />

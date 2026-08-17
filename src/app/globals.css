@@ -1,19 +1,22 @@
 @import "tailwindcss";
 
-/* Dark-only palette (validated categorical/status set, dark steps). */
+/* Persona 5 Royale-inspired palette: red / black / off-white. */
 :root {
-  --page-plane: #0d0d0d;
-  --surface-1: #1a1a19;
-  --surface-2: #232322;
-  --text-primary: #ffffff;
-  --text-secondary: #c3c2b7;
-  --text-muted: #898781;
-  --gridline: #2c2c2a;
-  --baseline: #383835;
-  --border-hairline: rgba(255, 255, 255, 0.1);
-  --series-1: #3987e5;
-  --status-good: #0ca30c;
-  --status-critical: #e66767;
+  --page-plane: #0a0a0a;
+  --surface-1: #141213;
+  --surface-2: #1d1a1b;
+  --text-primary: #f3f0e8;
+  --text-secondary: #c9c3b4;
+  --text-muted: #8f887a;
+  --gridline: #2c2725;
+  --baseline: #433c39;
+  --border-hairline: rgba(226, 0, 26, 0.35);
+  --series-1: #ff2a3c;
+  --status-good: #e2001a;
+  --status-critical: #f3f0e8;
+  --p5-red: #e2001a;
+  --p5-red-bright: #ff2a3c;
+  --p5-red-dark: #7d0010;
 }
 
 @theme inline {
@@ -28,8 +31,12 @@
   --color-series-1: var(--series-1);
   --color-status-good: var(--status-good);
   --color-status-critical: var(--status-critical);
+  --color-p5-red: var(--p5-red);
+  --color-p5-red-bright: var(--p5-red-bright);
+  --color-p5-red-dark: var(--p5-red-dark);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
 }
 
 html {
@@ -38,9 +45,58 @@ html {
 
 body {
   background:
-    radial-gradient(ellipse 900px 500px at 50% -8%, rgba(57, 135, 229, 0.16), transparent 60%),
-    radial-gradient(ellipse 700px 400px at 100% 0%, rgba(144, 133, 233, 0.08), transparent 55%),
+    repeating-linear-gradient(
+      135deg,
+      rgba(226, 0, 26, 0.05) 0px,
+      rgba(226, 0, 26, 0.05) 2px,
+      transparent 2px,
+      transparent 26px
+    ),
+    radial-gradient(circle, rgba(243, 240, 232, 0.05) 1px, transparent 1px) 0 0 / 5px 5px,
+    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(226, 0, 26, 0.22), transparent 60%),
     var(--page-plane);
   background-attachment: fixed;
   color: var(--text-primary);
+}
+
+/* Angled "torn poster" panel: cut corners + hard comic-shadow + red frame. */
+.p5-panel {
+  position: relative;
+  background: var(--surface-1);
+  border: 2px solid var(--p5-red);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 16px) 0,
+    100% 16px,
+    100% 100%,
+    16px 100%,
+    0 calc(100% - 16px)
+  );
+  box-shadow:
+    6px 6px 0 0 var(--p5-red-dark),
+    0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.p5-panel-tight {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  box-shadow:
+    4px 4px 0 0 var(--p5-red-dark),
+    0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.p5-heading {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: 0.03em;
+}
+
+.p5-stripe {
+  background: repeating-linear-gradient(
+    -12deg,
+    var(--p5-red) 0px,
+    var(--p5-red) 10px,
+    var(--p5-red-dark) 10px,
+    var(--p5-red-dark) 20px
+  );
 }
