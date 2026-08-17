@@ -1,4 +1,5 @@
 import { sql } from "./db";
+import { toDate } from "./dates";
 import { env } from "./env";
 import { fetchCompetitiveStats } from "./overfast";
 import type { PlayerConfig, PlayerPollStatus, SnapshotRow } from "./types";
@@ -6,7 +7,7 @@ import type { PlayerConfig, PlayerPollStatus, SnapshotRow } from "./types";
 interface PlayerDelta {
   gamesPlayedDelta: number;
   gamesWonDelta: number;
-  previousTakenAt: string;
+  previousTakenAt: Date | string;
   snapshotId: number;
 }
 
@@ -118,8 +119,8 @@ export async function runPoll() {
 
       const windowStart = new Date(
         Math.min(
-          new Date(p1.delta.previousTakenAt).getTime(),
-          new Date(p2.delta.previousTakenAt).getTime()
+          toDate(p1.delta.previousTakenAt).getTime(),
+          toDate(p2.delta.previousTakenAt).getTime()
         )
       );
 

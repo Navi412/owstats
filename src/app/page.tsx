@@ -5,6 +5,7 @@ import { SessionList } from "@/components/SessionList";
 import { SyncStatusBanner } from "@/components/SyncStatusBanner";
 import { SetupNotice } from "@/components/SetupNotice";
 import { ErrorNotice } from "@/components/ErrorNotice";
+import { classifyDbError } from "@/lib/dbError";
 import { getMissingEnvVars } from "@/lib/env";
 import {
   getDailyWinrate,
@@ -56,9 +57,10 @@ export default async function Home() {
       getPlayers(),
     ]);
   } catch (err) {
+    const { kind, detail } = classifyDbError(err);
     return (
       <Shell>
-        <ErrorNotice detail={String(err)} />
+        <ErrorNotice kind={kind} detail={detail} />
       </Shell>
     );
   }

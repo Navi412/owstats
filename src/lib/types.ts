@@ -33,13 +33,14 @@ export interface SnapshotRow {
   player_slug: PlayerSlug;
   games_played: number;
   games_won: number;
-  taken_at: string;
+  /** The DB driver parses timestamptz columns into Date, not string. */
+  taken_at: Date | string;
 }
 
 export interface MatchRow {
   id: number;
-  window_start: string;
-  window_end: string;
+  window_start: Date | string;
+  window_end: Date | string;
   games_delta: number;
   wins_delta: number;
   losses_delta: number;
@@ -47,7 +48,7 @@ export interface MatchRow {
 
 export interface SyncLogRow {
   id: number;
-  run_at: string;
+  run_at: Date | string;
   success: boolean;
   player_1_status: PlayerPollStatus;
   player_2_status: PlayerPollStatus;

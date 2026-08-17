@@ -1,4 +1,5 @@
 import type { SessionDay } from "@/lib/queries";
+import { toDate } from "@/lib/dates";
 
 function formatDayHeading(day: string): string {
   const d = new Date(`${day}T00:00:00Z`);
@@ -10,8 +11,8 @@ function formatDayHeading(day: string): string {
   });
 }
 
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("es-ES", {
+function formatTime(value: Date | string): string {
+  return toDate(value).toLocaleTimeString("es-ES", {
     hour: "2-digit",
     minute: "2-digit",
     timeZone: "Europe/Madrid",

@@ -1,4 +1,5 @@
 import { sql } from "./db";
+import { formatYMD, toDate } from "./dates";
 import type { MatchRow, SyncLogRow } from "./types";
 
 export interface ScoreboardTotals {
@@ -45,12 +46,12 @@ export async function getDailyWinrate(days = 30): Promise<DailyWinrate[]> {
     WHERE window_end >= now() - (${days} || ' days')::interval
     GROUP BY 1
     ORDER BY 1 ASC
-  `) as unknown as { day: string; wins: number; losses: number }[];
+  `) as unknown as { day: Date | string; wins: number; losses: number }[];
 
   return rows.map((r) => {
     const games = r.wins + r.losses;
     return {
-      day: r.day,
+      day: formatYMD(r.day),
       wins: r.wins,
       losses: r.losses,
       games,
@@ -84,8 +85,8 @@ export async function getRecentSessions(days = 14): Promise<SessionDay[]> {
     WHERE window_end >= now() - (${days} || ' days')::interval
     ORDER BY window_end DESC
   `) as unknown as {
-    window_start: string;
-    window_end: string;
+    window_start: Date | string;
+    window_end: Date | string;
     games_delta: number;
     wins_delta: number;
     losses_delta: number;
@@ -94,7 +95,7 @@ export async function getRecentSessions(days = 14): Promise<SessionDay[]> {
   const byDay = new Map<string, SessionDay>();
 
   for (const row of rows) {
-    const day = row.window_end.slice(0, 10);
+    const day = formatYMD(row.window_end);
     let entry = byDay.get(day);
     if (!entry) {
       entry = { day, wins: 0, losses: 0, games: 0, windows: [] };
@@ -104,8 +105,8 @@ export async function getRecentSessions(days = 14): Promise<SessionDay[]> {
     entry.losses += row.losses_delta;
     entry.games += row.games_delta;
     entry.windows.push({
-      windowStart: row.window_start,
-      windowEnd: row.window_end,
+      windowStart: toDate(row.window_start).toISOString(),
+      windowEnd: toDate(row.window_end).toISOString(),
       wins: row.wins_delta,
       losses: row.losses_delta,
       games: row.games_delta,

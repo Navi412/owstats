@@ -1,5 +1,6 @@
 import type { SyncStatus } from "@/lib/queries";
 import type { PlayerPollStatus } from "@/lib/types";
+import { toDate } from "@/lib/dates";
 
 const STATUS_LABELS: Record<PlayerPollStatus, string> = {
   ok: "ok",
@@ -10,16 +11,16 @@ const STATUS_LABELS: Record<PlayerPollStatus, string> = {
   error: "error de conexión con OverFast",
 };
 
-function formatAbsolute(iso: string): string {
-  return new Date(iso).toLocaleString("es-ES", {
+function formatAbsolute(value: Date | string): string {
+  return toDate(value).toLocaleString("es-ES", {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "Europe/Madrid",
   });
 }
 
-function formatRelative(iso: string): string {
-  const diffMs = Date.now() - new Date(iso).getTime();
+function formatRelative(value: Date | string): string {
+  const diffMs = Date.now() - toDate(value).getTime();
   const minutes = Math.round(diffMs / 60_000);
   if (minutes < 1) return "hace instantes";
   if (minutes < 60) return `hace ${minutes} min`;
