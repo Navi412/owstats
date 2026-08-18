@@ -5,7 +5,12 @@ CREATE TABLE IF NOT EXISTS players (
   slug         text PRIMARY KEY,        -- 'player_1' | 'player_2'
   battletag    text NOT NULL,
   display_name text NOT NULL,
-  updated_at   timestamptz NOT NULL DEFAULT now()
+  updated_at   timestamptz NOT NULL DEFAULT now(),
+  -- Snapshot up to which this player's games have already been counted into
+  -- a match (or a season-reset baseline). Matching compares each player's
+  -- latest snapshot against this pointer instead of requiring both players'
+  -- deltas to land in the same poll, since polls rarely land in sync.
+  counted_through_snapshot_id bigint
 );
 
 CREATE TABLE IF NOT EXISTS snapshots (
@@ -19,6 +24,10 @@ CREATE TABLE IF NOT EXISTS snapshots (
 
 CREATE INDEX IF NOT EXISTS snapshots_player_taken_at_idx
   ON snapshots (player_slug, taken_at DESC);
+
+ALTER TABLE players
+  ADD CONSTRAINT players_counted_through_snapshot_fk
+  FOREIGN KEY (counted_through_snapshot_id) REFERENCES snapshots(id);
 
 -- A "match" row is not a single game: OverFast has no per-match history.
 -- It represents one poll window in which BOTH players' games_played

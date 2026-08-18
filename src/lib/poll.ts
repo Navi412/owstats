@@ -2,19 +2,11 @@ import { sql } from "./db";
 import { toDate } from "./dates";
 import { env } from "./env";
 import { fetchCompetitiveStats } from "./overfast";
-import type { PlayerConfig, PlayerPollStatus, SnapshotRow } from "./types";
-
-interface PlayerDelta {
-  gamesPlayedDelta: number;
-  gamesWonDelta: number;
-  previousTakenAt: Date | string;
-  snapshotId: number;
-}
+import type { PlayerConfig, PlayerPollStatus, PlayerSlug, SnapshotRow } from "./types";
 
 interface PlayerOutcome {
   status: PlayerPollStatus;
   message?: string;
-  delta?: PlayerDelta;
 }
 
 async function processPlayer(config: PlayerConfig, now: Date): Promise<PlayerOutcome> {
@@ -37,10 +29,12 @@ async function processPlayer(config: PlayerConfig, now: Date): Promise<PlayerOut
 
   // Case: first snapshot ever for this player -> baseline only, no delta.
   if (!previous) {
-    await sql`
+    const inserted = (await sql`
       INSERT INTO snapshots (player_slug, games_played, games_won, payload, taken_at)
       VALUES (${config.slug}, ${gamesPlayed}, ${gamesWon}, ${JSON.stringify(payload)}, ${now.toISOString()})
-    `;
+      RETURNING id
+    `) as unknown as { id: number }[];
+    await sql`UPDATE players SET counted_through_snapshot_id = ${inserted[0].id} WHERE slug = ${config.slug}`;
     return { status: "ok" };
   }
 
@@ -49,37 +43,111 @@ async function processPlayer(config: PlayerConfig, now: Date): Promise<PlayerOut
     return { status: "no_change" };
   }
 
-  // Case: games_played went down -> season reset. Rebase, don't count matches.
+  // Case: games_played went down -> season reset. Rebase, don't count matches,
+  // and move this player's counted-through pointer up so a stale pre-reset
+  // baseline can't block future matches from ever being detected again.
   if (gamesPlayed < previous.games_played) {
-    await sql`
+    const inserted = (await sql`
       INSERT INTO snapshots (player_slug, games_played, games_won, payload, taken_at)
       VALUES (${config.slug}, ${gamesPlayed}, ${gamesWon}, ${JSON.stringify(payload)}, ${now.toISOString()})
-    `;
+      RETURNING id
+    `) as unknown as { id: number }[];
+    await sql`UPDATE players SET counted_through_snapshot_id = ${inserted[0].id} WHERE slug = ${config.slug}`;
     return { status: "season_reset" };
   }
 
-  // Normal case: games_played increased since the last snapshot.
-  const insertedRows = (await sql`
+  // Normal case: games_played increased since the last snapshot. Just record
+  // it — whether it pairs up with the other player into a match is decided
+  // separately in tryRecordMatch, which looks across all polls rather than
+  // requiring both players to move in this exact same one.
+  await sql`
     INSERT INTO snapshots (player_slug, games_played, games_won, payload, taken_at)
     VALUES (${config.slug}, ${gamesPlayed}, ${gamesWon}, ${JSON.stringify(payload)}, ${now.toISOString()})
-    RETURNING id
-  `) as unknown as { id: number }[];
+  `;
+  return { status: "ok" };
+}
 
-  const gamesPlayedDelta = gamesPlayed - previous.games_played;
-  let gamesWonDelta = gamesWon - previous.games_won;
+interface PlayerSnapshotInfo {
+  snapshotId: number;
+  gamesPlayed: number;
+  gamesWon: number;
+  takenAt: Date | string;
+}
+
+async function getLatestSnapshot(slug: PlayerSlug): Promise<PlayerSnapshotInfo | null> {
+  const rows = (await sql`
+    SELECT id, games_played, games_won, taken_at
+    FROM snapshots
+    WHERE player_slug = ${slug}
+    ORDER BY taken_at DESC
+    LIMIT 1
+  `) as unknown as SnapshotRow[];
+  const r = rows[0];
+  if (!r) return null;
+  return { snapshotId: Number(r.id), gamesPlayed: r.games_played, gamesWon: r.games_won, takenAt: r.taken_at };
+}
+
+/**
+ * Looks for a new match by comparing each player's latest snapshot against
+ * the snapshot they were last "counted through" (players.counted_through_snapshot_id),
+ * rather than requiring both players' games_played to move within the same
+ * poll. Polls land at irregular, independent times (GitHub Actions cron
+ * jitter, manual refreshes, OverFast's own cache), so pairing on a single
+ * poll call almost never fires even when both players clearly played
+ * together — this instead accumulates each player's un-counted progress
+ * until both sides have some, then reconciles.
+ */
+async function tryRecordMatch(now: Date): Promise<boolean> {
+  const baselineRows = (await sql`
+    SELECT p.slug, s.id, s.games_played, s.games_won, s.taken_at
+    FROM players p
+    JOIN snapshots s ON s.id = p.counted_through_snapshot_id
+    WHERE p.slug IN ('player_1', 'player_2')
+  `) as unknown as (SnapshotRow & { slug: PlayerSlug })[];
+
+  const baseline1 = baselineRows.find((r) => r.slug === "player_1");
+  const baseline2 = baselineRows.find((r) => r.slug === "player_2");
+  if (!baseline1 || !baseline2) return false;
+
+  const [latest1, latest2] = await Promise.all([
+    getLatestSnapshot("player_1"),
+    getLatestSnapshot("player_2"),
+  ]);
+  if (!latest1 || !latest2) return false;
+
+  const gamesDelta1 = latest1.gamesPlayed - baseline1.games_played;
+  const gamesDelta2 = latest2.gamesPlayed - baseline2.games_played;
+  if (gamesDelta1 <= 0 || gamesDelta2 <= 0) return false;
+
+  const gamesDelta = Math.min(gamesDelta1, gamesDelta2);
+  let winsDelta = Math.min(
+    latest1.gamesWon - baseline1.games_won,
+    latest2.gamesWon - baseline2.games_won
+  );
   // Defensive clamp in case the two counters are ever inconsistent.
-  if (gamesWonDelta < 0) gamesWonDelta = 0;
-  if (gamesWonDelta > gamesPlayedDelta) gamesWonDelta = gamesPlayedDelta;
+  if (winsDelta < 0) winsDelta = 0;
+  if (winsDelta > gamesDelta) winsDelta = gamesDelta;
+  const lossesDelta = gamesDelta - winsDelta;
 
-  return {
-    status: "ok",
-    delta: {
-      gamesPlayedDelta,
-      gamesWonDelta,
-      previousTakenAt: previous.taken_at,
-      snapshotId: insertedRows[0].id,
-    },
-  };
+  const windowStart = new Date(
+    Math.min(toDate(baseline1.taken_at).getTime(), toDate(baseline2.taken_at).getTime())
+  );
+
+  await sql`
+    INSERT INTO matches (
+      window_start, window_end, games_delta, wins_delta, losses_delta,
+      player_1_snapshot_id, player_2_snapshot_id
+    )
+    VALUES (
+      ${windowStart.toISOString()}, ${now.toISOString()}, ${gamesDelta}, ${winsDelta}, ${lossesDelta},
+      ${latest1.snapshotId}, ${latest2.snapshotId}
+    )
+  `;
+
+  await sql`UPDATE players SET counted_through_snapshot_id = ${latest1.snapshotId} WHERE slug = 'player_1'`;
+  await sql`UPDATE players SET counted_through_snapshot_id = ${latest2.snapshotId} WHERE slug = 'player_2'`;
+
+  return true;
 }
 
 const UNHEALTHY_STATUSES: PlayerPollStatus[] = ["private", "not_found", "error"];
@@ -106,37 +174,7 @@ export async function runPoll() {
     processPlayer(players[1], now),
   ]);
 
-  let matchRecorded = false;
-
-  // Only count matches when BOTH players show a genuine positive delta in
-  // the same window -> strong signal they played together.
-  if (p1.delta && p2.delta) {
-    const gamesDelta = Math.min(p1.delta.gamesPlayedDelta, p2.delta.gamesPlayedDelta);
-    if (gamesDelta > 0) {
-      let winsDelta = Math.min(p1.delta.gamesWonDelta, p2.delta.gamesWonDelta);
-      if (winsDelta > gamesDelta) winsDelta = gamesDelta;
-      const lossesDelta = gamesDelta - winsDelta;
-
-      const windowStart = new Date(
-        Math.min(
-          toDate(p1.delta.previousTakenAt).getTime(),
-          toDate(p2.delta.previousTakenAt).getTime()
-        )
-      );
-
-      await sql`
-        INSERT INTO matches (
-          window_start, window_end, games_delta, wins_delta, losses_delta,
-          player_1_snapshot_id, player_2_snapshot_id
-        )
-        VALUES (
-          ${windowStart.toISOString()}, ${now.toISOString()}, ${gamesDelta}, ${winsDelta}, ${lossesDelta},
-          ${p1.delta.snapshotId}, ${p2.delta.snapshotId}
-        )
-      `;
-      matchRecorded = true;
-    }
-  }
+  const matchRecorded = await tryRecordMatch(now);
 
   const success = !UNHEALTHY_STATUSES.includes(p1.status) && !UNHEALTHY_STATUSES.includes(p2.status);
   const message = [p1.message, p2.message].filter(Boolean).join(" | ") || null;
