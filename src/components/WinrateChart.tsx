@@ -11,11 +11,11 @@ import {
 } from "recharts";
 import type { DailyWinrate } from "@/lib/queries";
 
-const SERIES_COLOR = "#ff2a3c"; // p5-red-bright
-const GRIDLINE = "#2c2725";
-const BASELINE = "#e2001a";
-const MUTED = "#8f887a";
-const SURFACE = "#141213";
+const SERIES_COLOR = "#a855f7"; // p5-red-bright (now purple)
+const GRIDLINE = "#2a2233";
+const BASELINE = "#a855f7";
+const MUTED = "#8f83a0";
+const SURFACE = "#17101f";
 
 function formatDay(day: string): string {
   const d = new Date(`${day}T00:00:00Z`);

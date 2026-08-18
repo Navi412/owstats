@@ -13,13 +13,13 @@ export function Scoreboard({ totals }: { totals: ScoreboardTotals }) {
     >
       <div
         className="pointer-events-none absolute -top-24 h-56 w-56 rounded-full blur-3xl opacity-30"
-        style={{ background: "radial-gradient(circle, #ff2a3c, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, #a855f7, transparent 70%)" }}
         aria-hidden
       />
 
       <div className="relative text-center">
         <p className="p5-heading text-sm text-text-secondary mb-1">Winrate jugando juntas</p>
-        <p className="p5-heading text-[72px] leading-none text-text-primary drop-shadow-[2px_2px_0_rgba(226,0,26,0.6)]">
+        <p className="p5-heading text-[72px] leading-none text-text-primary drop-shadow-[2px_2px_0_rgba(126,34,206,0.6)]">
           {formatWinrate(totals.winrate)}
         </p>
       </div>

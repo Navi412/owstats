@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
-/* Persona 5 Royale-inspired palette: red / black / off-white. */
+/* Chicken Little-inspired palette: stormy purple sky / black / off-white. */
 :root {
-  --page-plane: #0a0a0a;
-  --surface-1: #141213;
-  --surface-2: #1d1a1b;
+  --page-plane: #0a0713;
+  --surface-1: #17101f;
+  --surface-2: #201829;
   --text-primary: #f3f0e8;
-  --text-secondary: #c9c3b4;
-  --text-muted: #8f887a;
-  --gridline: #2c2725;
-  --baseline: #433c39;
-  --border-hairline: rgba(226, 0, 26, 0.35);
-  --series-1: #ff2a3c;
-  --status-good: #e2001a;
+  --text-secondary: #cbc0d9;
+  --text-muted: #8f83a0;
+  --gridline: #2a2233;
+  --baseline: #423959;
+  --border-hairline: rgba(168, 85, 247, 0.35);
+  --series-1: #c084fc;
+  --status-good: #a855f7;
   --status-critical: #f3f0e8;
-  --p5-red: #e2001a;
-  --p5-red-bright: #ff2a3c;
-  --p5-red-dark: #7d0010;
+  --p5-red: #7e22ce;
+  --p5-red-bright: #a855f7;
+  --p5-red-dark: #3b0764;
 }
 
 @theme inline {
@@ -47,22 +47,24 @@ body {
   position: relative;
   overflow-x: hidden;
   background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cg opacity='0.07' fill='%23e9ddff'%3E%3Cpath d='M170 118 Q216 84 202 50 Q196 96 160 108 Z'/%3E%3Cpath d='M178 132 Q228 112 224 78 Q206 118 172 126 Z'/%3E%3Cellipse cx='118' cy='152' rx='58' ry='44'/%3E%3Ccircle cx='66' cy='96' r='30'/%3E%3Cpath d='M56 68 Q62 48 70 66 Q76 46 84 66 Q90 48 96 68 Q84 80 68 80 Q56 80 56 68 Z'/%3E%3Cpath d='M38 98 L12 90 L38 110 Z'/%3E%3Cpath d='M54 116 Q46 128 58 132 Q66 122 54 116 Z'/%3E%3Cpath d='M96 196 L90 226 M90 226 L78 234 M90 226 L102 232' stroke='%23e9ddff' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M140 196 L146 226 M146 226 L134 234 M146 226 L158 232' stroke='%23e9ddff' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E")
+      no-repeat bottom -10px right 4vw / 340px 340px,
     repeating-linear-gradient(
       135deg,
-      rgba(226, 0, 26, 0.05) 0px,
-      rgba(226, 0, 26, 0.05) 2px,
+      rgba(168, 85, 247, 0.05) 0px,
+      rgba(168, 85, 247, 0.05) 2px,
       transparent 2px,
       transparent 26px
     ),
     radial-gradient(circle, rgba(243, 240, 232, 0.05) 1px, transparent 1px) 0 0 / 5px 5px,
-    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(226, 0, 26, 0.22), transparent 60%),
-    radial-gradient(ellipse 700px 420px at 100% 110%, rgba(226, 0, 26, 0.16), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(168, 85, 247, 0.28), transparent 60%),
+    radial-gradient(ellipse 700px 420px at 100% 110%, rgba(126, 34, 206, 0.22), transparent 60%),
     var(--page-plane);
   background-attachment: fixed;
   color: var(--text-primary);
 }
 
-/* Persona-style "action line" bursts tucked in opposite corners. */
+/* Stormy "action line" bursts tucked in opposite corners. */
 body::before,
 body::after {
   content: "";
